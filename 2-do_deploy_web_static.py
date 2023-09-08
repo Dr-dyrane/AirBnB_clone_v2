@@ -1,71 +1,76 @@
 #!/usr/bin/python3
 """
 Script Name: 2-do_deploy_web_static.py
-Usage:       fab -f 2-do_deploy_web_static.py
-                do_deploy:archive_path=<path_to_archive>
+Usage:
+    fab -f 2-do_deploy_web_static.py do_deploy:archive_path=<path_to_archive>
 Description: This Fabric script deploys a web_static archive to web servers.
-             It uploads, uncompresses, & manages symbolic links - the archive.
+    It uploads, uncompresses, and manages symbolic links for the archive.
 Author:      Alexander Udeogaranya
-Example:     fab -f 2-do_deploy_web_static.py
-                do_deploy:archive_path=versions/web_static_20170315003959.tgz
+Example:
+    fab -f 2-do_deploy_web_static.py
+    do_deploy:archive_path=versions/web_static_20170315003959.tgz
 """
 
-from fabric.api import *
-from datetime import datetime
-from os import path
+import os
+from fabric.api import env, put, run
 
-# Define the host servers and user
-env.hosts = ['100.25.46.228', '54.236.222.22']
-env.user = 'ubuntu'
-env.key_filename = '~/.ssh/id_rsa'
+env.hosts = ['100.25.19.204', '54.157.159.85']
 
 
 def do_deploy(archive_path):
     """
-    Deploys the web_static archive to the web servers.
+    Distribute an archive to a web server, unpack, and manage symbolic links.
 
     Args:
-        archive_path (str): The path to the web_static archive.
+        archive_path (str): The path to the archive to be deployed.
 
     Returns:
-        bool: True if deployment is successful, False otherwise.
+        bool: True on success, False on failure.
     """
-    try:
-        if not path.exists(archive_path):
+    # Check if the archive exists
+    if not os.path.isfile(archive_path):
+        return False
+
+    # Extract the archive file name and name without extension
+    file_name = os.path.basename(archive_path)
+    name = file_name.split('.')[0]
+
+    # Upload the archive to the server
+    if put(archive_path, "/tmp/{}".format(file_name)).failed:
+        return False
+
+    # Define remote paths
+    releases_dir = "/data/web_static/releases/{}".format(name)
+
+    # Unpack the archive and clean up
+    commands = [
+        "rm -rf {}/".format(releases_dir),
+        "mkdir -p {}/".format(releases_dir),
+        "tar -xzf /tmp/{} -C {}/".format(file_name, releases_dir),
+        "rm /tmp/{}".format(file_name),
+        "mv {}/web_static/* {}/".format(releases_dir, releases_dir),
+        "rm -rf {}/web_static".format(releases_dir),
+        "rm -rf /data/web_static/current",
+        "ln -s {} /data/web_static/current".format(releases_dir)
+    ]
+
+    # Execute commands on the remote server
+    for cmd in commands:
+        if run(cmd).failed:
             return False
 
-        # Extract the filename from the archive path
-        filename = archive_path.split("/")[-1]
-        # Remove the file extension (.tgz) to get the timestamp
-        timestamp = filename[:-4]
+    return True
 
-        # Create paths
-        archive_src = "/tmp/" + filename
-        archive_dst = "/data/web_static/releases/" + timestamp
-        current_link = "/data/web_static/current"
 
-        # Upload the archive
-        put(archive_path, archive_src)
+if __name__ == "__main__":
+    # Run the deployment when this script is executed directly
+    from argparse import ArgumentParser
 
-        # Create the destination directory
-        run("sudo mkdir -p {}".format(archive_dst))
-
-        # Extract the archive
-        run("sudo tar -xzf {} -C {}".format(archive_src, archive_dst))
-
-        # Delete the archive
-        run("sudo rm {}".format(archive_src))
-
-        # Move contents to the correct location
-        run("sudo mv {}/web_static/* {}".format(archive_dst, archive_dst))
-
-        # Remove the old symbolic link if it exists
-        run("sudo rm -rf {}".format(current_link))
-
-        # Create a new symbolic link
-        run("sudo ln -s {} {}".format(archive_dst, current_link))
-
-        return True
-
-    except Exception as e:
-        return False
+    parser = ArgumentParser()
+    parser.add_argument("archive_path", help="Path to the archive to deploy")
+    args = parser.parse_args()
+    
+    if do_deploy(args.archive_path):
+        print("Deployment successful!")
+    else:
+        print("Deployment failed.")
