@@ -69,7 +69,7 @@ if __name__ == "__main__":
     parser = ArgumentParser()
     parser.add_argument("archive_path", help="Path to the archive to deploy")
     args = parser.parse_args()
-    
+
     if do_deploy(args.archive_path):
         print("Deployment successful!")
     else:
