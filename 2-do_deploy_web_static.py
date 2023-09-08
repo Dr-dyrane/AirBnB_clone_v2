@@ -42,6 +42,7 @@ def do_deploy(archive_path):
         # Create paths
         archive_src = "/tmp/" + filename
         archive_dst = "/data/web_static/releases/" + timestamp
+        current_link = "/data/web_static/current"
 
         # Upload the archive
         put(archive_path, archive_src)
@@ -58,11 +59,11 @@ def do_deploy(archive_path):
         # Move contents to the correct location
         run("sudo mv {}/web_static/* {}".format(archive_dst, archive_dst))
 
-        # Remove the old symbolic link
-        run("sudo rm -rf /data/web_static/current")
+        # Remove the old symbolic link if it exists
+        run("sudo rm -rf {}".format(current_link))
 
         # Create a new symbolic link
-        run("sudo ln -s {} /data/web_static/current".format(archive_dst))
+        run("sudo ln -s {} {}".format(archive_dst, current_link))
 
         return True
 
