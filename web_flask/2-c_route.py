@@ -4,7 +4,7 @@
 The web application listens on 0.0.0.0, port 5000, and defines three routes:
 - '/': Displays "Hello HBNB!" when accessed.
 - '/hbnb': Displays "HBNB" when accessed.
-- '/c/<text>': Displays "C " followed by the value of the text variable, 
+- '/c/<text>': Displays "C " followed by the value of the text variable,
   with underscores (_) replaced by spaces.
 
 Usage:
