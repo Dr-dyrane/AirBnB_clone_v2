@@ -56,7 +56,7 @@ def cText(text):
 
     Args:
         text (str): The text to be displayed.
-        
+
     Returns:
         str: "C" followed by the modified text.
     """
