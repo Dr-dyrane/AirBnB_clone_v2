@@ -31,7 +31,7 @@ app = Flask(__name__)
 def hello():
     """
     Route that returns a greeting.
-    
+
     Returns:
         str: A greeting message.
     """
@@ -42,7 +42,7 @@ def hello():
 def hbnb():
     """
     Route that returns "HBNB".
-    
+
     Returns:
         str: "HBNB"
     """
@@ -53,7 +53,7 @@ def hbnb():
 def cText(text):
     """
     Route that displays "C" followed by the value of the text variable.
-    
+
     Args:
         text (str): The text to be displayed.
         
@@ -68,10 +68,10 @@ def cText(text):
 def pythonText(text="is cool"):
     """
     Route that displays "Python" followed by the value of the text variable.
-    
+
     Args:
         text (str, optional): The text to be displayed. Defaults to "is cool".
-    
+
     Returns:
         str: "Python" followed by the modified text.
     """
@@ -82,10 +82,10 @@ def pythonText(text="is cool"):
 def isNumber(n):
     """
     Route that displays "<n> is a number" if n is an integer.
-    
+
     Args:
         n (int): The number to be checked.
-        
+
     Returns:
         str: "<n> is a number" if n is an integer.
     """
@@ -97,11 +97,11 @@ def isNumber(n):
 def number_template(n=None):
     """
     Route that displays an HTML page with the number if n is an integer.
-    
+
     Args:
         n (int, optional): The number to be displayed in the HTML page.
         Defaults to None.
-    
+
     Returns:
         str: HTML page with the number if n is an integer.
     """
@@ -114,10 +114,10 @@ def number_odd_or_even(n=None):
     """
     Route that displays an HTML page with information
     about whether n is even or odd.
-    
+
     Args:
         n (int, optional): The number to be checked. Defaults to None.
-    
+
     Returns:
         str: HTML page with information about whether n is even or odd.
     """
