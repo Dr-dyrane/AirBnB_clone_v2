@@ -30,7 +30,7 @@ def display_states():
     Returns:
         str: Rendered HTML page with a list of States.
     """
-    states = storage.all()
+    states = storage.all(State)
     return render_template('7-states_list.html', states=states)
 
 
