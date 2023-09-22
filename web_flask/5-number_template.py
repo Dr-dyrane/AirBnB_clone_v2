@@ -16,7 +16,7 @@ Usage:
     Run this script directly to start the Flask web application.
 """
 
-from flask import Flask, render_template, abort
+from flask import Flask, render_template
 
 app = Flask(__name__)
 
@@ -54,9 +54,9 @@ def cText(text):
     return "C {}".format(text.replace("_", " "))
 
 
-@app.route("/python/", defaults={"text": "is cool"}, strict_slashes=False)
+@app.route("/python/", strict_slashes=False)
 @app.route("/python/<text>", strict_slashes=False)
-def pythonText(text):
+def pythonText(text="is cool"):
     """Display 'Python ' followed by the value of the text variable.
 
     Args:
@@ -81,12 +81,10 @@ def isNumber(n):
     """
     if isinstance(n, int):
         return "{} is a number".format(n)
-    else:
-        abort(404)
 
 
 @app.route("/number_template/<int:n>", strict_slashes=False)
-def numberTemplate(n):
+def numberTemplate(n=None):
     """Display an HTML page with the number if n is an integer.
 
     Args:
@@ -97,10 +95,8 @@ def numberTemplate(n):
         or a 404 error if n is not an integer.
     """
     if isinstance(n, int):
-        return render_template('5-number.html', number=n)
-    else:
-        abort(404)
+        return render_template('5-number.html', n=n)
 
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000, debug=None)
+    app.run()
