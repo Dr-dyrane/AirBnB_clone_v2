@@ -142,7 +142,7 @@ class DBStorage:
         """
         if self.__session:
             self.__session.close()
-        self.session = None
+        self.reload()
 
     def get(self, cls, id):
         """
