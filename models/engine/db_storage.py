@@ -142,6 +142,7 @@ class DBStorage:
         """
         if self.__session:
             self.__session.close()
+        self.session = None
 
     def get(self, cls, id):
         """
