@@ -141,8 +141,7 @@ class DBStorage:
         Dispose of the current session if active.
         """
         if self.__session:
-            self.__session.close()
-        self.reload()
+            self.__session.remove()
 
     def get(self, cls, id):
         """
